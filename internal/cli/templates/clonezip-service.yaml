@@ -1,0 +1,55 @@
+title: My Backups
+dateFormat: en-US
+listen: :8091
+allowActionsFrom:
+    - 127.0.0.0/8
+    - ::1/128
+out: ./backups
+
+defaults:
+    cloneDepth: 1
+    jobs: 4
+    retries: 2
+    timeout: 30m0s
+    failFast: false
+    skipChecks: false
+    historyLimit: 10
+
+groups:
+    - name: AzureDevOps - Project
+      repos:
+        - https://<company>@dev.azure.com/<company>/project1/_git/subrepo1
+        - https://<user>@dev.azure.com/<user>/project2/_git/subrepo2
+      schedule: 0 1 * * *
+      enabled: true
+      out: ./azuredevops
+    - name: GitHub - Private
+      repos:
+        - https://github.com/<user>/project1.git
+      schedule: 0 1 * * *
+      enabled: false
+      out: ./github/private
+    - name: GitHub - Public
+      repos:
+        - https://github.com/<user>/project2.git
+      schedule: 0 1 * * *
+      enabled: false
+      out: ./github/public
+    - name: Codeberg - private
+      repos:
+        - https://codeberg.org/<user>/project1.git
+      schedule: 0 1 * * *
+      enabled: true
+      out: ./codeberg/private
+    - name: Codeberg - public
+      repos:
+        - https://codeberg.org/<user>/project2.git
+      schedule: 0 1 * * *
+      enabled: true
+      out: ./codeberg/public
+    - name: Bitbucket
+      repos:
+        - https://<user>@bitbucket.org/<workspace>/project1.git
+      schedule: 0 1 * * *
+      enabled: false
+      out: ./bitbucket

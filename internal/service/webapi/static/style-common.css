@@ -1,0 +1,588 @@
+:root {
+  color-scheme: light dark;
+  --radius-card: 14px;
+  --radius-control: 9px;
+  --font-ui: 'Space Grotesk', system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* The header bar always uses the dark palette, in both light and dark
+     mode, so these are fixed values rather than theme-dependent vars. */
+  --header-bg: #0a0b0d;
+  --header-fg: #e8e9ec;
+  --header-muted: #8b8f98;
+  --header-border: rgba(255, 255, 255, .07);
+  --header-accent: #7c7ff2;
+  --header-accent-contrast: #0a0b0d;
+  --header-ok: #4ade80;
+  --header-fail: #f87171;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--fg);
+  font: 14px/1.5 var(--font-ui);
+}
+
+header {
+  background: var(--header-bg);
+  color: var(--header-fg);
+  border-bottom: 1px solid var(--header-border);
+}
+
+/* Matches main's width/centering formula so header controls line up with
+   the group cards below instead of hugging the browser edges. */
+.header-inner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: min(92vw, 1600px);
+  margin: 0 auto;
+  padding: 1.375rem 1.5rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--header-accent) 14%, transparent);
+  color: var(--header-accent);
+  margin-right: -0.4rem;
+}
+
+.brand { display: flex; flex-direction: column; gap: 0.1rem; }
+
+.header-subtitle { font-size: 1rem; font-weight: 600; letter-spacing: -0.01em; color: var(--header-muted); line-height: 1; }
+
+h1 { font-size: 1rem; font-weight: 600; letter-spacing: -0.01em; margin: 0; color: var(--header-fg); }
+h2 { font-size: 1.1rem; margin: 0; }
+h3 { font-size: 0.9rem; margin: 1.5rem 0 0.5rem; color: var(--muted); }
+
+.muted { color: var(--muted); font-size: 0.85rem; }
+
+.app-footer { text-align: center; color: var(--muted); font-size: 0.78rem; padding: 1.5rem 0 1rem; }
+
+/* One shared width for every view (groups grid, form, detail), since they
+   are all children of main - and adaptive rather than a fixed cap, so it
+   keeps growing as the browser window widens instead of stalling at a fixed
+   breakpoint. */
+main { flex: 1; padding: 1.5rem; width: min(92vw, 1600px); margin: 0 auto; }
+
+.group-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.card {
+  background: var(--card-bg);
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-card);
+  padding: 1.25rem;
+}
+
+.storage-summary {
+  background: var(--card-bg);
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-card);
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+.storage-summary:empty { display: none; }
+.storage-summary h3 { margin: 0 0 0.5rem; display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; }
+.storage-summary .disk-bar { height: 0.6rem; margin: 0.25rem 0 0.4rem; }
+
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.card-head h3 { margin: 0; color: var(--fg); font-size: 1rem; font-weight: 600; letter-spacing: -0.01em; }
+
+.badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.badge.on { background: color-mix(in srgb, var(--ok) 16%, transparent); color: var(--ok); }
+.badge.off { background: color-mix(in srgb, var(--fg) 6%, transparent); color: var(--muted); }
+.badge.running { background: #00aeff; color: #ffffff; font-weight: 700; }
+
+.card .schedule {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.card .schedule svg { opacity: .7; flex: none; }
+
+.row { display: flex; justify-content: space-between; margin-top: 0.35rem; font-size: 0.85rem; }
+.card .row { margin-top: 0.5rem; }
+
+.counts span { margin-right: 0.6rem; }
+.counts .ok { color: var(--ok); }
+.counts .warn { color: var(--warn); }
+.counts .failed { color: var(--fail); }
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--border);
+}
+
+button.run {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: none;
+  padding: 0.35rem 0.75rem;
+  border: none;
+  border-radius: var(--radius-control);
+  background: color-mix(in srgb, var(--fg) 8%, transparent);
+  color: var(--ok);
+  cursor: pointer;
+  font: 600 0.85rem var(--font-ui);
+}
+
+button.run:disabled { opacity: 0.5; cursor: default; }
+
+button.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 0;
+  font: 700 0.95rem var(--font-ui);
+}
+
+.detail-head { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 0.5rem; }
+.detail-head .back-link { align-self: flex-start; }
+.detail-head-row { display: flex; align-items: baseline; gap: 1rem; }
+.detail-head-row #detail-edit { margin-left: auto; }
+
+.hidden { display: none !important; }
+
+table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0.85rem; }
+th, td { text-align: left; padding: 0.35rem 0.5rem; border-bottom: 1px solid var(--border); }
+th { color: var(--muted); font-weight: 500; }
+td.mono, .mono { font-family: var(--font-mono); font-size: 0.8rem; word-break: break-all; }
+
+.progress-bar {
+  height: 0.35rem;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+  margin: 0.5rem 0;
+}
+
+.progress-fill { height: 100%; background: var(--accent); width: 0%; }
+
+.disk-bar {
+  position: relative;
+  display: flex;
+  height: 0.35rem;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+  background: var(--border);
+}
+/* Deliberately fixed (not theme-driven --fail/--ok) and neon-saturated well
+   past the app's normal status red/green, so the used/free split stays
+   legible even where a muted status color would look muddy next to its
+   counterpart. */
+.disk-bar-used { height: 100%; background: #ff178f; box-shadow: 0 0 6px #ff178f; }
+.disk-bar-free { height: 100%; background: #39ff14; box-shadow: 0 0 6px #39ff14; }
+/* A solid divider at the used/free boundary, overlapping the bar itself
+   (same height, layered on top via absolute positioning). Fixed black
+   rather than var(--fg): the fills it sits on are always bright neon, so a
+   dark divider contrasts against them in both themes - var(--fg) flips to
+   near-white in dark mode and disappears against the neon green fill. */
+.disk-bar-divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #000;
+  transform: translateX(-50%);
+}
+
+.repos-view {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  max-height: 16rem;
+  overflow-y: auto;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  background: var(--card-bg);
+  color: var(--fg);
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-card);
+  padding: 0.65rem 0.75rem;
+}
+.repo-row-view.disabled {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.small { font-size: 0.75rem; margin-top: 0.15rem; }
+
+.badge.warn-badge {
+  background: color-mix(in srgb, var(--warn) 16%, transparent);
+  color: var(--warn);
+  margin-left: 0.4rem;
+}
+
+tr.expandable { cursor: pointer; }
+tr.expandable:hover { background: color-mix(in srgb, var(--fg) 4%, transparent); }
+
+table.nested { margin: 0.35rem 0 0.5rem; }
+table.nested th, table.nested td { padding: 0.25rem 0.5rem; }
+
+.ok { color: var(--ok); }
+.warn { color: var(--warn); }
+.failed { color: var(--fail); }
+.skipped { color: var(--muted); }
+
+.progress-table th:nth-child(2), .progress-table td:nth-child(2) { width: 9rem; }
+.progress-table th:nth-child(3), .progress-table td:nth-child(3) { width: 6rem; }
+.progress-table th:nth-child(4), .progress-table td:nth-child(4) { width: 4rem; }
+
+.mini-bar {
+  height: 4px;
+  width: 100%;
+  min-width: 3rem;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+  margin-top: 0.25rem;
+}
+.mini-bar > div { height: 100%; background: var(--accent); }
+
+.elapsed { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.elapsed.slow { color: var(--warn); font-weight: 600; }
+
+.log-tail {
+  margin-top: 0.5rem;
+  max-height: 12rem;
+  overflow-y: auto;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  padding: 0.5rem 0.65rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+.log-tail .line { white-space: pre-wrap; word-break: break-all; }
+.log-tail .line .repo { color: var(--muted); }
+.log-tail .line.warn { color: var(--warn); }
+.log-tail .line.error { color: var(--fail); }
+
+.header-inner { justify-content: space-between; }
+.header-actions { display: flex; align-items: center; gap: 0.6rem; margin-left: auto; }
+
+.health {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--header-muted);
+  font-size: 0.85rem;
+}
+.health .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--header-ok);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--header-ok) 18%, transparent);
+  flex: none;
+}
+.health.unreachable .dot { background: var(--header-fail); box-shadow: 0 0 0 3px color-mix(in srgb, var(--header-fail) 18%, transparent); }
+
+/* Shown when the client is outside allowActionsFrom, to explain why every
+   action control is missing rather than leaving the dashboard looking
+   broken. */
+.read-only-badge {
+  padding: 0.1rem 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--header-muted) 45%, transparent);
+  border-radius: var(--radius-control);
+  color: var(--header-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  cursor: help;
+}
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: none;
+  border-radius: var(--radius-control);
+  background: none;
+  color: var(--header-muted);
+  cursor: pointer;
+  font-size: 0.95rem;
+  line-height: 1;
+}
+.theme-toggle:hover { background: color-mix(in srgb, var(--header-fg) 8%, transparent); color: var(--header-fg); }
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-control);
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+.icon-button:hover { background: color-mix(in srgb, var(--fg) 8%, transparent); color: var(--fg); }
+
+header .header-actions .icon-button { color: var(--header-muted); }
+header .header-actions .icon-button:hover,
+header .header-actions .icon-button[aria-expanded="true"] {
+  background: color-mix(in srgb, var(--header-fg) 12%, transparent);
+  color: var(--header-fg);
+}
+
+.menu { position: relative; }
+.menu-list {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.45rem);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  min-width: 12.5rem;
+  padding: 0.3rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--card-bg);
+  box-shadow: var(--shadow-card);
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  border: none;
+  border-radius: calc(var(--radius-control) - 3px);
+  background: none;
+  color: var(--fg);
+  cursor: pointer;
+  font: 600 0.85rem var(--font-ui);
+  text-align: left;
+}
+.menu-item svg { flex: none; color: var(--muted); }
+.menu-item:hover:not(:disabled) { background: color-mix(in srgb, var(--fg) 8%, transparent); }
+.menu-item:disabled { cursor: default; opacity: 0.65; }
+.menu-item.running, .menu-item.running svg { color: var(--ok); }
+.menu-sep { height: 1px; margin: 0.3rem 0.25rem; background: var(--border); }
+
+button.primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--radius-control);
+  border: none;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  cursor: pointer;
+  font: 600 0.85rem var(--font-ui);
+}
+
+button.danger {
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--fail);
+  background: transparent;
+  color: var(--fail);
+  cursor: pointer;
+  font: 600 0.85rem var(--font-ui);
+}
+
+button.secondary {
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--fg);
+  cursor: pointer;
+  font: 600 0.85rem var(--font-ui);
+}
+
+.form-grid { display: grid; gap: 0.75rem; }
+.form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.form-grid input[type="text"],
+.form-grid input[type="number"],
+.form-grid select,
+.form-grid textarea {
+  width: 100%;
+  box-sizing: border-box;
+  font: inherit;
+  color: var(--fg);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  padding: 0.45rem 0.6rem;
+}
+.form-grid input[readonly] {
+  background: color-mix(in srgb, var(--fg) 5%, transparent);
+  color: var(--muted);
+  cursor: default;
+}
+.form-grid input[type="checkbox"] {
+  width: auto;
+  margin-right: 0.4rem;
+  accent-color: var(--accent);
+  /* Native checkboxes take their unchecked look from color-scheme, which the
+     theme toggle pins per theme; this keeps the empty box visible either way. */
+  outline: 1px solid var(--border);
+  outline-offset: 1px;
+}
+.form-grid .checkbox-row { flex-direction: row; align-items: center; }
+.form-grid .field-error { color: var(--fail); font-size: 0.75rem; }
+.form-hint { color: var(--muted); font-size: 0.75rem; line-height: 1.4; }
+.form-section-title {
+  margin: 0.5rem 0 0;
+  font: 600 0.8rem var(--font-ui);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.repos-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-height: 20rem;
+  overflow-y: auto;
+  padding: 0.1rem;
+}
+.repo-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.repo-row input[type="checkbox"] { flex: none; margin: 0; }
+.repo-row .repo-url {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+.repo-row.disabled .repo-url {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+.repo-remove {
+  flex: none;
+  width: 1.6rem;
+  height: 1.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+}
+.repo-remove:hover { color: var(--fail); border-color: var(--fail); }
+
+.form-row { display: flex; gap: 0.75rem; }
+.form-row label { flex: 1; }
+
+.schedule-presets { display: flex; gap: 0.5rem; margin-top: -0.25rem; }
+.schedule-presets button.secondary { padding: 0.25rem 0.6rem; font-size: 0.75rem; }
+
+.cron-legend {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+  padding: 0.25rem 0.25rem 0.5rem;
+  border-bottom: 1px dashed var(--border);
+}
+.cron-legend-field {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.1rem;
+}
+.cron-legend-token {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--fg);
+}
+.cron-legend-name { font-size: 0.7rem; color: var(--fg); }
+.cron-legend-range { font-size: 0.7rem; color: var(--muted); }
+
+.schedule-preview { font-size: 0.8rem; color: var(--muted); min-height: 1.1rem; }
+.schedule-preview.error { color: var(--fail); }
+
+.form-actions { display: flex; align-items: center; gap: 0.75rem; margin-top: 0.5rem; }
+
+/* Matches the detail view's own borderless soft-chip button (button.run),
+   colored for each action's own meaning. */
+.form-actions button.primary,
+.form-actions button.danger,
+.form-actions button.secondary {
+  padding: 0.35rem 0.75rem;
+  border: none;
+  border-radius: var(--radius-control);
+  background: color-mix(in srgb, var(--fg) 8%, transparent);
+  cursor: pointer;
+  font: 600 0.85rem var(--font-ui);
+}
+
+.form-actions button.primary { color: var(--ok); }
+.form-actions button.danger { color: var(--fail); }
+.form-actions button.secondary { color: var(--fg); }
+
+.errors {
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--fail);
+  border-radius: var(--radius-control);
+  background: var(--card-bg);
+  font-size: 0.8rem;
+}
+.errors ul { margin: 0.25rem 0 0; padding-left: 1.1rem; }
+.errors .field-error { color: var(--fail); }

@@ -1,0 +1,26 @@
+backups/
+dist/
+private/
+github/
+
+*.exe
+
+# Backup runs: backup creates <yyyyMMdd-hhmmss>-<repolist name>/ in the working
+# directory, holding the archives, the run log and any captured failures.
+[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-*/
+
+# Restored repositories and loose archives, as restore leaves them.
+*.git/
+# *.git.zip
+*.git.7z
+*.ndjson
+
+__debug_bin*
+clonezip-*.log
+clonezip-service.yaml.lock
+clonezip.testbin
+settings.local.json
+
+# Go test and coverage output.
+*.test
+coverage.out

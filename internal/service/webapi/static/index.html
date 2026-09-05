@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>clonezip service</title>
+  <link rel="icon" type="image/svg+xml" href="/icon-32.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style-common.css">
+  <link rel="stylesheet" href="/style-light.css">
+  <link rel="stylesheet" href="/style-dark.css">
+  <script>
+    (function () {
+      var t = localStorage.getItem('theme');
+      if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+    })();
+  </script>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="ic-box" viewBox="0 0 20 20" fill="none">
+        <path d="M10 2.5 3 6l7 3.5 7-3.5-7-3.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M3 6v8l7 3.5 7-3.5V6" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M10 9.5V17" stroke="currentColor" stroke-width="1.5"/>
+      </symbol>
+      <symbol id="ic-clock" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/>
+        <path d="M8 4.8V8l2.4 1.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="ic-folder" viewBox="0 0 16 16" fill="none">
+        <path d="M2 4.2c0-.66.54-1.2 1.2-1.2h3l1.4 1.6h5.2c.66 0 1.2.54 1.2 1.2v6.4c0 .66-.54 1.2-1.2 1.2H3.2A1.2 1.2 0 0 1 2 12.2V4.2Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="ic-play" viewBox="0 0 12 12" fill="none">
+        <path d="M3 2.3v7.4c0 .5.54.8 1 .55l6.2-3.7c.44-.26.44-.9 0-1.16L4 1.75c-.46-.27-1 .05-1 .55Z" fill="currentColor"/>
+      </symbol>
+      <symbol id="ic-arrow" viewBox="0 0 14 14" fill="none">
+        <path d="M4 2.8v8.4c0 .56.6.9 1.1.62l7-4.2c.5-.3.5-1.04 0-1.34l-7-4.2c-.5-.28-1.1.06-1.1.62Z" fill="currentColor"/>
+      </symbol>
+      <symbol id="ic-arrow-left" viewBox="0 0 14 14" fill="none">
+        <path d="M10 2.8v8.4c0 .56-.6.9-1.1.62l-7-4.2c-.5-.3-.5-1.04 0-1.34l7-4.2c.5-.28 1.1.06 1.1.62Z" fill="currentColor"/>
+      </symbol>
+      <symbol id="ic-plus" viewBox="0 0 14 14" fill="none">
+        <path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="ic-unarchive" viewBox="0 0 14 14" fill="none">
+        <rect x="1.8" y="2.4" width="10.4" height="2.6" rx=".7" stroke="currentColor" stroke-width="1.4"/>
+        <path d="M2.9 5v5.9a1.2 1.2 0 0 0 1.2 1.2h5.8a1.2 1.2 0 0 0 1.2-1.2V5" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+        <path d="M7 10.4V6.9m-1.5 1.5L7 6.9l1.5 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="ic-dots-vertical" viewBox="0 0 14 14" fill="none">
+        <circle cx="7" cy="2.6" r="1.3" fill="currentColor"/>
+        <circle cx="7" cy="7" r="1.3" fill="currentColor"/>
+        <circle cx="7" cy="11.4" r="1.3" fill="currentColor"/>
+      </symbol>
+      <symbol id="ic-settings" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="2.1" stroke="currentColor" stroke-width="1.4"/>
+        <path d="M8 1.6h0a1 1 0 0 1 1 1v.36a.9.9 0 0 0 .55.83.9.9 0 0 0 .98-.18l.26-.26a1 1 0 0 1 1.41 0l.44.44a1 1 0 0 1 0 1.41l-.26.26a.9.9 0 0 0-.18.98.9.9 0 0 0 .83.55h.36a1 1 0 0 1 1 1v.62a1 1 0 0 1-1 1h-.36a.9.9 0 0 0-.83.55.9.9 0 0 0 .18.98l.26.26a1 1 0 0 1 0 1.41l-.44.44a1 1 0 0 1-1.41 0l-.26-.26a.9.9 0 0 0-.98-.18.9.9 0 0 0-.55.83v.36a1 1 0 0 1-1 1h-.62a1 1 0 0 1-1-1v-.36a.9.9 0 0 0-.55-.83.9.9 0 0 0-.98.18l-.26.26a1 1 0 0 1-1.41 0l-.44-.44a1 1 0 0 1 0-1.41l.26-.26a.9.9 0 0 0 .18-.98.9.9 0 0 0-.83-.55H2.6a1 1 0 0 1-1-1v-.62a1 1 0 0 1 1-1h.36a.9.9 0 0 0 .83-.55.9.9 0 0 0-.18-.98l-.26-.26a1 1 0 0 1 0-1.41l.44-.44a1 1 0 0 1 1.41 0l.26.26a.9.9 0 0 0 .98.18h.04a.9.9 0 0 0 .55-.83V2.6a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <header>
+    <div class="header-inner">
+      <span class="logo"><img src="/icon-32.svg" width="18" height="18" alt=""></span>
+      <div class="brand">
+        <h1>clonezip service</h1>
+        <div id="header-title" class="header-subtitle hidden"></div>
+      </div>
+      <div id="health" class="health muted">connecting&hellip;</div>
+      <div id="read-only-badge" class="read-only-badge hidden" title="This dashboard is being viewed from another machine. Actions are available on the server host only (see allowActionsFrom in the service config).">read-only</div>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle theme" title="Toggle theme">&#9728;</button>
+      <div class="header-actions">
+        <div class="menu">
+          <button id="open-menu" class="icon-button" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="actions-menu" aria-label="Actions" title="Actions">
+            <svg width="14" height="14"><use href="#ic-dots-vertical"/></svg>
+          </button>
+          <div id="actions-menu" class="menu-list hidden" role="menu" aria-label="Actions">
+            <button id="new-group" class="menu-item" type="button" role="menuitem">
+              <svg width="12" height="12" aria-hidden="true"><use href="#ic-plus"/></svg>
+              New group
+            </button>
+            <button id="run-all" class="menu-item" type="button" role="menuitem">
+              <svg width="12" height="12" aria-hidden="true"><use href="#ic-play"/></svg>
+              <span id="run-all-label">Run all now</span>
+            </button>
+            <button id="open-restore" class="menu-item" type="button" role="menuitem">
+              <svg width="12" height="12" aria-hidden="true"><use href="#ic-unarchive"/></svg>
+              Restore a repository
+            </button>
+            <div class="menu-sep" role="separator" id="menu-sep"></div>
+            <button id="open-settings" class="menu-item" type="button" role="menuitem">
+              <svg width="12" height="12" aria-hidden="true"><use href="#ic-settings"/></svg>
+              Service settings
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="storage-summary" class="storage-summary" aria-label="disk usage"></section>
+    <section id="groups" class="group-grid" aria-label="groups"></section>
+
+    <section id="settings-form" class="detail hidden" aria-label="service settings">
+      <div class="detail-head">
+        <button id="settings-close" class="link back-link" type="button"><svg width="15" height="15"><use href="#ic-arrow-left"/></svg>back</button>
+        <div class="detail-head-row">
+          <h2>Service settings</h2>
+        </div>
+      </div>
+
+      <form id="settings-form-el" class="form-grid">
+        <div class="form-row">
+          <label>Title
+            <input type="text" id="set-title" autocomplete="off" placeholder="shown in the dashboard header">
+          </label>
+          <label>Date format (locale)
+            <input type="text" id="set-date-format" autocomplete="off" placeholder="en-US">
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Listen address
+            <input type="text" id="set-listen" autocomplete="off" placeholder=":8091">
+            <span class="form-hint">Saved to the config file, but only takes effect after a service restart.</span>
+          </label>
+          <label>Backup root
+            <input type="text" id="set-out" autocomplete="off" readonly>
+            <span class="form-hint">Read-only: repointing it would strand existing backups. Edit the config file to change it.</span>
+          </label>
+        </div>
+
+        <h3 class="form-section-title">Defaults for groups</h3>
+        <div class="form-row">
+          <label>Clone depth
+            <input type="number" id="set-clone-depth" min="0" step="1" required>
+          </label>
+          <label>Parallel jobs
+            <input type="number" id="set-jobs" min="1" step="1" required>
+          </label>
+          <label>Retries
+            <input type="number" id="set-retries" min="0" step="1" required>
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Timeout
+            <input type="text" id="set-timeout" autocomplete="off" placeholder="30m" required>
+          </label>
+          <label>History limit
+            <input type="number" id="set-history-limit" min="1" step="1" required>
+          </label>
+        </div>
+        <div class="form-row">
+          <label class="checkbox-row">
+            <span><input type="checkbox" id="set-fail-fast"> Fail fast</span>
+          </label>
+          <label class="checkbox-row">
+            <span><input type="checkbox" id="set-skip-checks"> Skip checks</span>
+          </label>
+        </div>
+
+        <div id="settings-errors" class="errors hidden"></div>
+        <div class="form-actions">
+          <button type="submit" id="settings-save" class="primary">Save</button>
+          <button type="button" id="settings-cancel" class="secondary">Cancel</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="group-form" class="detail hidden" aria-label="group form">
+      <div class="detail-head">
+        <button id="form-close" class="link back-link" type="button"><svg width="15" height="15"><use href="#ic-arrow-left"/></svg>back</button>
+        <div class="detail-head-row">
+          <h2 id="form-title">New group</h2>
+        </div>
+      </div>
+
+      <form id="group-form-el" class="form-grid">
+        <label>Name
+          <input type="text" id="form-name" autocomplete="off" required>
+        </label>
+        <div class="form-row">
+          <label>Schedule (cron)
+            <div class="cron-legend" aria-hidden="true">
+              <div class="cron-legend-field">
+                <span class="cron-legend-token">*</span>
+                <span class="cron-legend-name">minute</span>
+                <span class="cron-legend-range">0&ndash;59</span>
+              </div>
+              <div class="cron-legend-field">
+                <span class="cron-legend-token">*</span>
+                <span class="cron-legend-name">hour</span>
+                <span class="cron-legend-range">0&ndash;23</span>
+              </div>
+              <div class="cron-legend-field">
+                <span class="cron-legend-token">*</span>
+                <span class="cron-legend-name">day of month</span>
+                <span class="cron-legend-range">1&ndash;31</span>
+              </div>
+              <div class="cron-legend-field">
+                <span class="cron-legend-token">*</span>
+                <span class="cron-legend-name">month</span>
+                <span class="cron-legend-range">1&ndash;12</span>
+              </div>
+              <div class="cron-legend-field">
+                <span class="cron-legend-token">*</span>
+                <span class="cron-legend-name">day of week</span>
+                <span class="cron-legend-range">0&ndash;6 (Sun&ndash;Sat)</span>
+              </div>
+            </div>
+            <input type="text" id="form-schedule" placeholder="0 3 * * *" autocomplete="off" required>
+          </label>
+          <label class="checkbox-row">
+            <span><input type="checkbox" id="form-enabled" checked> Enabled</span>
+          </label>
+        </div>
+        <div class="schedule-presets" role="group" aria-label="Schedule presets">
+          <button type="button" class="secondary" data-schedule="0 * * * *">Hourly</button>
+          <button type="button" class="secondary" data-schedule="0 3 * * *">Daily</button>
+          <button type="button" class="secondary" data-schedule="0 3 * * 0">Weekly</button>
+          <button type="button" class="secondary" data-schedule="0 3 1 * *">Monthly</button>
+        </div>
+        <div id="schedule-preview" class="schedule-preview"></div>
+        <div class="form-row">
+          <label>Output dir (optional, relative to the backup root)
+            <input type="text" id="form-out" autocomplete="off" placeholder="defaults to the group name">
+          </label>
+          <label>Stage dir (optional, relative to the backup root)
+            <input type="text" id="form-stage" autocomplete="off" placeholder="defaults to <output dir>/.stage">
+          </label>
+        </div>
+        <label>Repository URLs
+          <div id="form-repos" class="repos-editor"></div>
+        </label>
+        <button type="button" id="form-repos-add" class="secondary">+ Add repository</button>
+        <div id="form-errors" class="errors hidden"></div>
+        <div class="form-actions">
+          <button type="submit" id="group-save" class="primary">Save</button>
+          <button type="button" id="form-cancel" class="secondary">Cancel</button>
+          <button type="button" id="form-delete" class="danger hidden">Delete group</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="restore-form" class="detail hidden" aria-label="restore a repository">
+      <div class="detail-head">
+        <button id="restore-close" class="link back-link" type="button"><svg width="15" height="15"><use href="#ic-arrow-left"/></svg>back</button>
+        <div class="detail-head-row">
+          <h2>Restore a repository</h2>
+        </div>
+      </div>
+
+      <form id="restore-form-el" class="form-grid">
+        <div class="form-row">
+          <label>Group
+            <select id="restore-group"></select>
+          </label>
+          <label>Repository
+            <select id="restore-repo" disabled></select>
+          </label>
+        </div>
+        <div id="restore-archive" class="form-hint"></div>
+        <label>Destination directory
+          <input type="text" id="restore-dest" autocomplete="off" placeholder="absolute path, e.g. C:\restore" required>
+          <span class="form-hint">Where &lt;repo&gt;.git (and &lt;repo&gt;, if cloning) will be created.</span>
+        </label>
+        <label>Remote origin (with --clone)
+          <select id="restore-origin">
+            <option value="source">Source URL</option>
+            <option value="bare">Local bare path</option>
+          </select>
+        </label>
+        <div class="form-section-title">Options</div>
+        <div class="form-row">
+          <label class="checkbox-row"><span><input type="checkbox" id="restore-clone"> Clone a working copy</span></label>
+          <label class="checkbox-row"><span><input type="checkbox" id="restore-force"> Force overwrite of an existing target</span></label>
+        </div>
+        <div class="form-row">
+          <label class="checkbox-row"><span><input type="checkbox" id="restore-confirm-shallow"> Confirm truncated/shallow history</span></label>
+          <label class="checkbox-row"><span><input type="checkbox" id="restore-no-verify"> Skip verification (git fsck)</span></label>
+        </div>
+        <div class="form-row">
+          <label class="checkbox-row"><span><input type="checkbox" id="restore-skip-checks"> Skip preflight checks</span></label>
+        </div>
+        <div id="restore-errors" class="errors hidden"></div>
+        <div class="form-actions">
+          <button type="submit" id="restore-submit" class="primary">Restore</button>
+          <button type="button" id="restore-cancel" class="secondary">Cancel</button>
+        </div>
+      </form>
+
+      <div id="restore-live" class="live hidden">
+        <h3>Log</h3>
+        <div id="restore-log" class="log-tail"></div>
+
+        <h3>Progress</h3>
+        <div id="restore-meta" class="muted"></div>
+        <div class="progress-bar"><div id="restore-bar" class="progress-fill"></div></div>
+        <div id="restore-result" class="config-grid"></div>
+      </div>
+    </section>
+
+    <section id="detail" class="detail hidden" aria-label="group detail">
+      <div class="detail-head">
+        <button id="detail-close" class="link back-link" type="button"><svg width="15" height="15"><use href="#ic-arrow-left"/></svg>back</button>
+        <div class="detail-head-row">
+          <h2 id="detail-name"></h2>
+          <button id="detail-run" class="run" type="button"><svg width="9" height="9"><use href="#ic-play"/></svg>Run now</button>
+          <span id="detail-run-msg" class="muted hidden"></span>
+          <button id="detail-edit" class="link" type="button">Edit</button>
+        </div>
+      </div>
+
+      <h3>Configuration</h3>
+      <div id="detail-config" class="config-grid"></div>
+
+      <h3>Repositories</h3>
+      <div id="detail-repos" class="repos-view"></div>
+
+      <h3>History</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Started</th><th>Trigger</th><th>Duration</th>
+            <th>OK</th><th>Warn</th><th>Failed</th><th>Disk</th><th>Where</th>
+          </tr>
+        </thead>
+        <tbody id="history-rows"></tbody>
+      </table>
+
+      <div id="detail-live" class="live hidden">
+        <h3>Log</h3>
+        <div id="live-log" class="log-tail"></div>
+
+        <h3>In progress</h3>
+        <div id="live-meta" class="muted"></div>
+        <div id="live-totals" class="muted"></div>
+        <div class="progress-bar"><div id="live-bar" class="progress-fill"></div></div>
+        <table class="progress-table">
+          <thead><tr><th>Repository</th><th>Phase</th><th>%</th><th>Status</th></tr></thead>
+          <tbody id="live-rows"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">clonezip &middot; &copy; 2026 heilingbrunner &middot; MIT License</footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>

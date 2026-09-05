@@ -1,0 +1,6 @@
+# Small checked-in repo list used by repolist.TestParseCommittedLists.
+# Two Azure DevOps entries: every entry must resolve to a non-empty
+# organization, project and repository name.
+repos:
+  - https://dev.azure.com/heilingbrunner/Tools/_git/clonezip
+  - https://dev.azure.com/heilingbrunner/Tools/_git/dirscan

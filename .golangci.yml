@@ -1,0 +1,6 @@
+# https://golangci-lint.run/usage/configuration/
+version: "2"
+
+# Options for analysis running.
+run:
+  go: "1.26"

@@ -1,0 +1,17 @@
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root {
+  --bg: #fbfbfc;
+  --fg: #16171a;
+  --muted: #6b6f78;
+  --border: rgba(15, 17, 21, .08);
+  --card-bg: #ffffff;
+  --accent: #6366f1;
+  --accent-contrast: #ffffff;
+  --ok: #16a34a;
+  --warn: #d97706;
+  --fail: #dc2626;
+  --shadow-card: 0 2px 3px rgba(15, 17, 21, .06), 0 14px 32px -12px rgba(15, 17, 21, .22);
+}
