@@ -1,5 +1,11 @@
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 
+# Prefer tools installed via `go install` over stale version-manager shims.
+# GOBIN may point into a version-specific Go install (e.g. mise), so also
+# include GOPATH/bin where tools survive Go upgrades.
+GO_TOOL_DIRS := $(strip $(shell go env GOBIN) $(shell go env GOPATH)/bin)
+export PATH := $(subst $() ,:,$(GO_TOOL_DIRS)):$(PATH)
+
 .PHONY: all tidy verify generate fmt lint vet winres build
 
 all: tidy verify generate fmt lint vet winres build

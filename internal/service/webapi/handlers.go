@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"net/http"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -123,6 +124,9 @@ func (a *api) listGroups(c *gin.Context) {
 	for i, gs := range snap {
 		out[i] = toGroupSummary(gs, a.repoCount(gs.Name))
 	}
+	slices.SortStableFunc(out, func(x, y groupSummaryDTO) int {
+		return service.CompareGroupNames(x.Name, y.Name)
+	})
 	c.JSON(http.StatusOK, out)
 }
 

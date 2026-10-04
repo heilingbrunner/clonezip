@@ -305,6 +305,7 @@ func LoadConfig(path string) (Config, error) {
 	if len(c.Groups) == 0 {
 		return Config{}, fmt.Errorf("no groups configured")
 	}
+	c.Groups = sortGroupsAscending(c.Groups)
 	if err := c.Validate(); err != nil {
 		return Config{}, err
 	}
@@ -315,6 +316,7 @@ func LoadConfig(path string) (Config, error) {
 // write to a temp file in the same directory, sync, then rename over path -
 // so a crash mid-write can never leave a half-written config on disk.
 func (c Config) Save(path string) error {
+	c.Groups = sortGroupsAscending(c.Groups)
 	data, err := yaml.Marshal(c)
 	if err != nil {
 		return fmt.Errorf("marshal config: %w", err)
@@ -437,6 +439,27 @@ func (c Config) Validate() error {
 		return &verr
 	}
 	return nil
+}
+
+// CompareGroupNames orders group names case-insensitively ascending, falling
+// back to a case-sensitive compare so names differing only in case still have
+// a deterministic order. It is the single ordering rule for the config file
+// and the web page.
+func CompareGroupNames(a, b string) int {
+	if c := strings.Compare(strings.ToLower(a), strings.ToLower(b)); c != 0 {
+		return c
+	}
+	return strings.Compare(a, b)
+}
+
+// sortGroupsAscending returns groups ordered by name (see CompareGroupNames).
+// It returns a fresh slice, leaving the input untouched.
+func sortGroupsAscending(groups []GroupConfig) []GroupConfig {
+	out := append([]GroupConfig(nil), groups...)
+	slices.SortStableFunc(out, func(a, b GroupConfig) int {
+		return CompareGroupNames(a.Name, b.Name)
+	})
+	return out
 }
 
 // sortReposAscending returns repos ordered case-insensitively ascending,

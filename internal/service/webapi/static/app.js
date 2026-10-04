@@ -285,7 +285,9 @@
 
   function renderGroups(groups) {
     groupsEl.innerHTML = "";
-    for (const group of groups) {
+    const sorted = [...groups].sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
+    for (const group of sorted) {
       const card = document.createElement("div");
       card.className = "card";
       card.dataset.name = group.name;

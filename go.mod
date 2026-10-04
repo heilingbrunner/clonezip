@@ -1,6 +1,6 @@
 module github.com/heilingbrunner/clonezip
 
-go 1.26.5
+go 1.27.0
 
 require (
 	github.com/charmbracelet/bubbletea v1.3.10

@@ -103,6 +103,68 @@ func TestLoadConfigRejectsLegacyDefaultsOut(t *testing.T) {
 	}
 }
 
+func groupNames(groups []GroupConfig) []string {
+	names := make([]string, len(groups))
+	for i, g := range groups {
+		names[i] = g.Name
+	}
+	return names
+}
+
+func TestSortGroupsAscending(t *testing.T) {
+	in := []GroupConfig{{Name: "beta"}, {Name: "Alpha"}, {Name: "alpha"}, {Name: "gamma"}}
+	got := groupNames(sortGroupsAscending(in))
+	want := []string{"Alpha", "alpha", "beta", "gamma"}
+	if !slices.Equal(got, want) {
+		t.Errorf("sorted = %v, want %v", got, want)
+	}
+	if orig := groupNames(in); orig[0] != "beta" {
+		t.Errorf("input was mutated: %v", orig)
+	}
+}
+
+func TestSaveWritesGroupsAscendingByName(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "clonezip-service.yaml")
+	mk := func(name string) GroupConfig {
+		return GroupConfig{Name: name, Schedule: "0 3 * * *", Repos: []string{"https://github.com/octocat/Hello-World.git"}}
+	}
+	cfg := Config{Dir: dir, Out: "backups", Groups: []GroupConfig{mk("zeta"), mk("alpha"), mk("Mid")}}
+	if err := cfg.Save(path); err != nil {
+		t.Fatalf("Save: %v", err)
+	}
+	if got := groupNames(cfg.Groups); got[0] != "zeta" {
+		t.Errorf("Save mutated the caller's config: %v", got)
+	}
+	loaded, err := LoadConfig(path)
+	if err != nil {
+		t.Fatalf("LoadConfig: %v", err)
+	}
+	want := []string{"alpha", "Mid", "zeta"}
+	if got := groupNames(loaded.Groups); !slices.Equal(got, want) {
+		t.Errorf("groups on disk = %v, want %v", got, want)
+	}
+}
+
+func TestConfigStoreCreateGroupKeepsFileSorted(t *testing.T) {
+	dir := t.TempDir()
+	cs, path := newTestConfigStore(t, settingsTestConfig(dir)) // holds "grp"
+	err := cs.CreateGroup(GroupConfig{
+		Name: "aaa", Schedule: "0 4 * * *",
+		Repos: []string{"https://github.com/octocat/Hello-World.git"},
+	})
+	if err != nil {
+		t.Fatalf("CreateGroup: %v", err)
+	}
+	loaded, err := LoadConfig(path)
+	if err != nil {
+		t.Fatalf("LoadConfig: %v", err)
+	}
+	if got, want := groupNames(loaded.Groups), []string{"aaa", "grp"}; !slices.Equal(got, want) {
+		t.Errorf("groups on disk = %v, want %v", got, want)
+	}
+}
+
 func TestConfigStoreUpdateGroupStoresRootRelativeOut(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "clonezip-service.yaml")
